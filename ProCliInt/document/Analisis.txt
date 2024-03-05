@@ -1,0 +1,17 @@
+Haciendo un analisis del mercado podemos encontrar los siguientes sitios para alojar videos:
+
+    Video.de onda
+    YouTube
+    Vimeo
+    Wistia
+    Cincopa
+    Vidyard
+    Brightcove
+    Dailymotion
+    Veintitrés
+    SproutVideo
+    JWPlayer
+    Dacast
+
+De los cuales voy a analizar unos pocos para ver su rentabilidad y capacidad, de cobro.
+    
