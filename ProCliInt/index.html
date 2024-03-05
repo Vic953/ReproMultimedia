@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/src/FavIcon.jpg" type="image/x-icon">
+    <title>Víctor Comino Reproductor Multimedia</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="cookies.css">
+    <script src="cookie.js"></script>
+    <!--https://www.youtube.com/watch?v=DmDdbtDWSYU enlace a video -->
+
+</head>
+<body>
+
+    <nav class="cabecera" id="header">
+        <h2>Reproductor Multimedia</h2>
+    </nav>
+
+    <!-- <img src="/src/repro.png" id="reproPlay" alt="playy"> -->
+    <div class="reproductor" id="cajaRepro">
+        <!-- Video y su configuración -->
+        <video id="video" poster="./src/poste1.png" preload="metadata">
+            <source src="./src/video.mp4">
+            <track class="subs" id="subsEs" default kind="captions" srclang="es" src="src/subEsp.vtt" />
+        </video>
+        <!-- Div contenedor de los botones de reproducción -->
+        <div id="caja" class="botonera">
+            <!-- Conjunto de botones principal -->
+            <button class="boton botonS " id="retrocede"><img src="./src/flecI.png" id="flecI" alt="playy"></button>
+            <button class="boton botonS " id="play"><img src="./src/play.png" id="bPlay" alt="playy"></button>
+            <button class="boton botonS " id="avanza"><img src="./src/flecD.png" id="flecD" alt="playy"></button>
+            <!-- Control de velocidad -->
+            <select name="vel" id="velocidad">
+                <option value="x0.5">x0.5</option>
+                <option value="x1">x1</option>
+                <option value="x1.5">x1.5</option>
+                <option value="x2">x2</option>
+            </select>
+            <!-- Control de volumen con paradas -->
+            <input type="range" value="0" min="0" max="1" step="0.01" list="vols" id="vol">
+            <datalist id="vols">
+                <option value="0" label="0%"></option>
+                <option value="0.5" label="50%"></option>
+                <option value="1" label="100%"></option>
+            </datalist>
+            <!-- Controles secundarios -->
+            <button id="loopb"><img id="loop" src="./src/loop.png" alt=""></button>
+            <button class="boton botonS "><img src="./src/subs.png" id="subs" alt="playy"></button>
+            <button id="aum"><img id="maxim" src="./src/full.png" alt=""></button>
+            <button id="bluz"><img id="bombi" class="luz" src="./src/bombilla.png" alt="?"></button>
+            <div id="bOcut">
+                <button class="boton botonS " id="botonOcult"><img src="./src/ojo.png" id="ojo" alt="Ocult"></button>
+            </div>
+        </div>
+
+    </div>
+    <div id="cookieContent">
+        <div id="cookie">
+            <p>Este sitio web utiliza cookies básicas para recoger información básica de la página no del usuario.</p>
+            <p>Para mas información haz click en <a href="aviso-cookies.html">info cookies</a></p>
+            <div class="divBot"></div>
+            <button class="butonCook" onclick="aceptarCookie()">Aceptar</button>
+            <button class="butonCook" onclick="rechazarCookie()">Rechazar</button>
+        </div> 
+    </div>
+
+    <footer id="footer">
+        &copy; Creado y realizado por Víctor Comino
+    </footer>
+</body>
+
+</html>
+<script>
+    //boleanos de comprobación
+    let enRepro = false;
+    let max = false;
+    let subsEnable = true;
+    let ocultoOnOff = false;
+    let luz = true;
+    //Obtención de recipientes
+    let body = document.querySelector('body');
+    let repro = document.getElementById('video');
+    let botonera = document.getElementById('caja');
+    let cRepro = document.getElementById('cajaRepro');
+    //Elementos
+    let play = document.getElementById('play');
+    let masTime = document.getElementById('avanza');
+    let menosTime = document.getElementById('retrocede');
+    let velo = document.getElementById('velocidad');
+    let volumen = document.getElementById('vol');
+    let loop = document.getElementById('loopb');
+    let maximizar = document.getElementById('aum');
+    let subst = document.getElementById('subs');
+    let textSubs = document.getElementById('subsEs');
+    let luces = document.getElementById('bombi');
+    let bLuces = document.getElementById('bluz');
+    //Otros
+    let iconoPlay = document.getElementById('reproPlay');
+    let head = document.getElementById('header');
+    let foot = document.getElementById('footer');
+
+    let ocult = document.getElementById('ojo');
+    let bOcult = document.getElementById('botonOcult');
+
+    repro.volume = 0;
+    repro.loop = false;
+
+    document.addEventListener("DOMContentLoaded", () => {
+        //Ocultamos el footer o no depende de pantalla
+        if (window.screen.width < 800) {
+            foot.style.display = 'none';
+        } else {
+            foot.style.display = 'grid';
+        }
+        //Botón de play/pausa
+        play.addEventListener('click', reproducir => {
+            if (enRepro == false) {
+                repro.play();
+                enRepro = true;
+            } else {
+                repro.pause();
+                enRepro = false;
+            }
+        });
+        //Aumento de velocidad de reproducción
+        velo.addEventListener('change', aumentarVel => {
+            if (velo.value == "x0.5") {
+                repro.playbackRate = 0.5;
+            }
+            if (velo.value == "x1") {
+                repro.playbackRate = 1;
+            }
+            if (velo.value == "x1.5") {
+                repro.playbackRate = 1.5;
+            }
+            if (velo.value == "x2") {
+                repro.playbackRate = 2;
+            }
+        });
+        //Conjunto de botones de avanzar y retroceder en el time del video.
+        masTime.addEventListener('click', anvanzarTime => {
+            repro.currentTime += 10;
+        });
+        menosTime.addEventListener('click', retrocederTime => {
+            repro.currentTime -= 10;
+        });
+
+        //Botón para desactivar o activar los subtitulos generados.
+        subst.addEventListener('click', subtOnOff => {
+            if (subsEnable == true) {
+                repro.textTracks[0].mode = 'hidden'
+                subsEnable = false;
+            } else {
+                repro.textTracks[0].mode = 'showing'
+                subsEnable = true;
+            }
+        });
+        //Cambio de volumen
+        volumen.addEventListener('change', cambiarVol => {
+            repro.volume = volumen.value;
+            console.log(volumen.value);
+        })
+        //Activar/Desactivar video en loop
+        loop.addEventListener('click', cambioLoop => {
+            repro.loop = !repro.loop;
+        })
+        //Modo luces apagadas/encendidas
+        luces.addEventListener('click', fueraLuces => {
+            if (luz == true) {
+                body.style.backgroundColor = 'black';
+                luz = false;
+            } else {
+                body.style.backgroundColor = 'white';
+                luz = true;
+            }
+
+        })
+        //Maximizar ventana y oculta el header y footer.
+        maximizar.addEventListener('click', maximizar => {
+            if (max == false) {
+                foot.style.display = "none";
+                head.style.display = "none";
+                cRepro.style.maxWidth = '94%';
+                botonera.style.backgroundColor = "#00000000";
+                max = true  
+                //body.style.backgroundColor = "black"
+            } else {
+                foot.style.display = "grid";
+                head.style.display = "grid";
+                cRepro.style.maxWidth = '70%';
+                botonera.style.backgroundColor = " rgba(4, 0, 255, 0.475)";
+                max = false
+                //body.style.backgroundColor = "white"
+            }
+            //repro.requestFullscreen();
+        })
+        //Click en video para reproducir o pausar
+        repro.addEventListener('click', incioPausa => {
+            if (enRepro == false) {
+                repro.play();
+                enRepro = true;
+            } else {
+                repro.pause();
+                enRepro = false;
+            }
+        })
+        //Muestra los botones cuando entra en el video a cierto tamaño de pantalla
+        repro.addEventListener('mouseenter', mostrarBotonesRepro => {
+            if (window.screen.width < 850) {
+                botonera.style.display = 'none';
+            } else {
+                botonera.style.display = 'flex';
+            }
+        })
+
+        botonera.addEventListener('mouseenter', mostrarPlay => {
+            botonera.style.display = 'flex';
+        })
+        //Ocultar botonera cuando sale el ratón de la botonera.
+        botonera.addEventListener('mouseleave', mostrarPlay => {
+
+            botonera.style.display = 'none';
+
+        })
+        //Ocultar botonera cuando sale el ratón del video.
+        repro.addEventListener('mouseleave', ocultarBotonesRepro => {
+
+            botonera.style.display = 'none';
+
+        })
+        //Función para ocultar la botonera cuándo quieras.
+        ocult.addEventListener('click', ocultarBarra => {
+            if (ocultoOnOff == false) {
+                botonera.style.backgroundColor = "#00000000";
+                play.style.display = 'none'
+                masTime.style.display = 'none'
+                menosTime.style.display = 'none'
+                velo.style.display = 'none'
+                volumen.style.display = 'none'
+                loop.style.display = 'none'
+                maximizar.style.display = 'none'
+                subst.style.display = 'none'
+                botonOcult.style.opacity = '0.3';
+                botonera.style.justifyContent = 'right';
+                bLuces.style.display = 'none';
+                ocultoOnOff = true;
+            } else {
+                botonera.style.backgroundColor = "#00000000";
+                play.style.display = 'flex'
+                masTime.style.display = 'flex'
+                menosTime.style.display = 'flex'
+                velo.style.display = 'flex'
+                volumen.style.display = 'flex'
+                loop.style.display = 'flex'
+                maximizar.style.display = 'flex'
+                subst.style.display = 'flex'
+                bLuces.style.display = 'flex';
+                botonOcult.style.opacity = '1';
+
+                botonera.style.justifyContent = 'center';
+
+                ocultoOnOff = false;
+            }
+        })
+
+        repro.addEventListener('click', guardarClicsVideo);
+
+    })
+
+    
+
+
+</script>
